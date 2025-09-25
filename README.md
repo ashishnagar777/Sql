@@ -1,117 +1,106 @@
-# Library Management System - SQL Schema
+# SQL Developer Internship – Task 3 (MySQL Workbench Solution)
 
-## 📘 Project Overview
-This project is part of the **SQL Developer Internship Task 1**.  
-It demonstrates database schema design for a **Library Management System**, including entities, relationships, SQL DDL scripts, and an ER diagram.
+This repository contains the solution for **Task 3: Writing Basic SELECT Queries**, completed in **MySQL Workbench**.
 
 ---
 
-## 🗂️ Database Schema
+## 📂 Files in this Repo
+- **task3_solution_mysql.sql**  
+  SQL script that:
+  - Creates tables (`departments`, `employees`, `customers`, `products`, `orders`, `order_items`)
+  - Inserts sample data
+  - Contains multiple `SELECT` queries demonstrating filtering, sorting, aliasing, DISTINCT, LIMIT, IN, LIKE, BETWEEN, ORDER BY, etc.
 
-### Entities & Relationships
-- **Users** → Students/Faculty who can borrow books.
-- **Authors** → Writers of books.
-- **Categories** → Classification of books.
-- **Books** → Books available in the library.
-- **BorrowRecords** → Track which user borrowed which book.
-
-### Relationships
-- One **Author** → Many **Books**
-- One **Category** → Many **Books**
-- One **User** → Many **BorrowRecords**
-- One **Book** → Many **BorrowRecords**
+- **screenshots/** *(optional)*  
+  Folder with screenshots of query execution and outputs from MySQL Workbench.
 
 ---
 
-## 🛠️ SQL Script
+## 🛠️ How to Run
 
-Save the schema in a file called **`library_schema.sql`**:
+1. Open **MySQL Workbench**.  
+2. Create a new schema (database), for example:
+   ```sql
+   CREATE DATABASE task3_db;
+   USE task3_db;
+   ```
+3. Open a new **SQL tab**, paste the contents of `task3_solution_mysql.sql`, and execute it.  
+   - The script will:  
+     - Drop existing tables (if any)  
+     - Create fresh tables with constraints  
+     - Insert sample data  
+     - Run all required `SELECT` queries  
 
+4. Run each `SELECT` query individually to verify outputs.  
+
+---
+
+## ✅ Examples of Queries
+
+### 1. Select all employees
 ```sql
--- Create Database
-CREATE DATABASE LibraryDB;
-USE LibraryDB;
+SELECT * FROM employees;
+```
 
--- Users Table
-CREATE TABLE Users (
-    user_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    phone VARCHAR(15),
-    user_type ENUM('Student','Faculty') NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+### 2. Employees with Gmail accounts
+```sql
+SELECT id, first_name, last_name, email
+FROM employees
+WHERE email LIKE '%@gmail.com';
+```
 
--- Authors Table
-CREATE TABLE Authors (
-    author_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    country VARCHAR(50)
-);
+### 3. Highest paid employees (Top 3)
+```sql
+SELECT first_name, last_name, salary
+FROM employees
+ORDER BY salary DESC
+LIMIT 3;
+```
 
--- Categories Table
-CREATE TABLE Categories (
-    category_id INT AUTO_INCREMENT PRIMARY KEY,
-    category_name VARCHAR(100) UNIQUE NOT NULL
-);
+### 4. Distinct customer cities
+```sql
+SELECT DISTINCT city FROM customers;
+```
 
--- Books Table
-CREATE TABLE Books (
-    book_id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(200) NOT NULL,
-    author_id INT,
-    category_id INT,
-    isbn VARCHAR(20) UNIQUE,
-    published_year YEAR,
-    available_copies INT DEFAULT 1,
-    FOREIGN KEY (author_id) REFERENCES Authors(author_id),
-    FOREIGN KEY (category_id) REFERENCES Categories(category_id)
-);
-
--- Borrow Records Table
-CREATE TABLE BorrowRecords (
-    record_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    book_id INT,
-    borrow_date DATE NOT NULL,
-    return_date DATE,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    FOREIGN KEY (book_id) REFERENCES Books(book_id)
-);
+### 5. Orders above $100, most recent first
+```sql
+SELECT o.id AS order_id,
+       c.name AS customer_name,
+       o.order_date,
+       o.total_amount
+FROM orders o
+JOIN customers c ON o.customer_id = c.id
+WHERE o.total_amount > 100
+ORDER BY o.order_date DESC
+LIMIT 5;
 ```
 
 ---
 
-## 📊 ER Diagram
-Below is the ER diagram for the schema:
-
-![ER Diagram](library_er_diagram.png)
+## 📸 Screenshots
+Please check the `screenshots/` folder for proof of query execution in **MySQL Workbench**.
 
 ---
 
-## 🚀 How to Run
-1. Clone this repository:
-   ```bash
-   git clone <your_repo_url>
-   cd <repo_folder>
-   ```
-
-2. Open **MySQL Workbench** (or pgAdmin / SQLiteStudio).  
-3. Run the SQL script:
-   ```sql
-   SOURCE library_schema.sql;
-   ```
-4. Import the **ER diagram** (`library_er_diagram.png`) to visualize schema.
+## 🔑 Key SQL Concepts Covered
+- `SELECT *` vs column projection  
+- Filtering rows with `WHERE`, `AND`, `OR`  
+- Pattern matching with `LIKE`  
+- Range queries with `BETWEEN`  
+- Sorting with `ORDER BY ASC | DESC`  
+- Limiting rows with `LIMIT` & pagination with `OFFSET`  
+- `=` vs `IN`  
+- `DISTINCT` for unique values  
+- Aliasing columns & computed expressions  
+- Aggregation with `COUNT(DISTINCT ...)`  
 
 ---
 
-## 📌 Key Concepts
-- **DDL (Data Definition Language)**
-- **Normalization**
-- **ER Diagrams**
-- **Primary & Foreign Keys**
+## 📝 Notes
+- Script tested on **MySQL 8.x**  
+- Can be re-run safely (tables are dropped before creation)  
+- Default schema name is not included, so make sure to `USE your_schema_name;` before executing  
 
 ---
 
-## ✨ Author
-- Internship Project by Ashish Nagar
+👨‍💻 Author: *[Your Name Here]*  
